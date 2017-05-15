@@ -7,26 +7,29 @@
 </head>
 <body>
 	
-
-    <form method="POST" action="/cgi-bin/wall.py">
-        Username <input type="text" name="username" required placeholder="your username">
-        Password <input type="password" name="password" required placeholder="your password">
-		<input type="submit" value="Log in"></br></br>
-	  </form>
-    <p>Create new Account</p>
-    <form method="POST" action="/cgi-bin/wall.py">
-    	<span>Enter FirstName *</span><br>
-        <input type="text" name="first_name" required placeholder="your firstname"><br>
-        <span>Enter LastName *</span><br>
-        <input type="text" name="last_name" required placeholder="your lastname"><br>
-        <span>Enter Username *</span><br>
-        <input type="text" name="username" required placeholder="your username"><br>
-        <span>Enter Password *</span><br>  
-        <input type="password" name="password" required placeholder="your password"><br>
-        <span>Enter Email </span><br>  
-		<input type="text" name="email" placeholder="your email"><br>
-        <input type="hidden" name="action" value="registration">
-		<input type="submit" value="Registrate">
-    </form>
+    <div>
+        <form method="POST" action="/cgi-bin/wall.py">
+            Username <input type="text" name="username" required placeholder="your username">
+            Password <input type="password" name="password" required placeholder="your password">
+    		<input class="button" type="submit" value="Log in"></br></br>
+    	  </form>
+        <p>Create new Account</p>
+    </div>
+    <div>
+        <form method="POST" action="/cgi-bin/wall.py">
+        	<span class="field_name">Enter FirstName </span><span class="star">*</span><br>
+            <input type="text" name="first_name" required placeholder="your firstname"><br>
+            <span class="field_name">Enter LastName </span><span class="star">*</span><br>
+            <input type="text" name="last_name" required placeholder="your lastname"><br>
+            <span class="field_name">Enter Username </span><span class="star">*</span><br>
+            <input type="text" name="username" required placeholder="your username"><br>
+            <span class="field_name">Enter Password </span><span class="star">*</span><br>  
+            <input type="password" name="password" required placeholder="your password"><br>
+            <span class="field_name">Enter Email </span><br>  
+    		<input type="text" name="email" placeholder="your email"><br>
+            <input type="hidden" name="action" value="registration">
+    		<input class="button" type="submit" value="Registrate">
+        </form>
+    </div>
 </body>
 </html>

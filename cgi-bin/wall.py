@@ -70,7 +70,7 @@ def printPosts(userID):
 		print("""<h1>User: {}</h1>""".format(row[0]))
 
 	print("""<form method="GET" action="../index.html">
-				<input type="submit" name="logout" value="Log Out">
+				<p class="logout"><input class="button" type="submit" name="logout" value="Log Out"></p>
 			</form><br><br>""")
 	getQuery = """select * from posts inner join users on users.user_id = posts.user_id
 						 order by posts.creation_date desc"""
@@ -82,7 +82,7 @@ def printPosts(userID):
 		
 		print("""<form method="POST" action="/cgi-bin/post.py">
 						<input type="hidden" name="user_id" value="{}">
-						<input type="submit" name="new_post" value="Create new post">
+						<p class="button-create"><input class="button" type="submit" name="new_post" value="Create new post"></p>
 
 			</form>""".format(userID))
 		print("""<hr>""")
@@ -90,7 +90,7 @@ def printPosts(userID):
 		rows = cursor.fetchall()
 		if (rows is not None):
 			for row in rows:
-				print("""<p>Publisher: {} | published date: {}</p>""".format(row[8], row[3]))
+				print("""<p class="published">Publisher: {} | published date: {}</p>""".format(row[8], row[3]))
 				print("""<p>Title: {}</p>
 						 <p>Content: {}</p>""".format(row[1], row[2]))
 				
@@ -101,7 +101,7 @@ def printPosts(userID):
 								<input type="hidden" name="title" value="{}">
 								<input type="hidden" name="content" value="{}">
 								<input type="hidden" name="action" value="update">
-								<input type="submit" name="edit" value="Edit">
+								<input class="button-edit" type="submit" name="edit" value="Edit">
 					</form>""".format(row[0], row[5], row[1], row[2]))
 					print("""<form method="POST" action="/cgi-bin/wall.py">
 								<input type="hidden" name="post_id" value="{}">
@@ -109,7 +109,7 @@ def printPosts(userID):
 								<input type="hidden" name="title" value="{}">
 								<input type="hidden" name="content" value="{}">
 								<input type="hidden" name="action" value="delete">
-								<input type="submit" name="delete" value="Delete">
+								<input class="button-delete" type="submit" name="delete" value="Delete">
 					</form>""".format(row[0], row[5], row[1], row[2]))
 
 				print("""<hr>""")
@@ -160,27 +160,31 @@ elif (action == "registration"):
 		row = cursor.fetchone()
 
 		if(row is not None):
-			print("""<p>User: \"{}\" Already Exists</p>""".format(username))
-			print("""<form method="POST" action="/cgi-bin/wall.py">
-			        Username <input type="text" name="username" required placeholder="your username">
-			        Password <input type="password" name="password"required placeholder="your password">
-					<input type="submit" value="Log in"></br></br>
-				  </form>
-			    <p>Create new Account</p>
-			    <form method="POST" action="/cgi-bin/wall.py">
-				    <span>Enter FirstName *</span><br>
-			        <input type="text" name="first_name" required placeholder="your firstname"><br>
-			        <span>Enter LastName *</span><br>
-			        <input type="text" name="last_name" required placeholder="your lastname"><br>
-			        <span>Enter Username *</span><br>
-			        <input type="text" name="username" required placeholder="your username"><br>
-			        <span>Enter Password *</span><br>  
-			        <input type="password" name="password" required placeholder="your password"><br>
-			        <span>Enter Email </span><br>  
-					<input type="text" name="email" placeholder="your email"><br>
-					<input type="hidden" name="action" value="registration">
-					<input type="submit" value="Registrate">
-			    </form>""")
+			print("""<p class="warning">User: \"{}\" Already Exists</p>""".format(username))
+			print("""<div>
+				        <form method="POST" action="/cgi-bin/wall.py">
+				            Username <input type="text" name="username" required placeholder="your username">
+				            Password <input type="password" name="password" required placeholder="your password">
+				    		<input class="button" type="submit" value="Log in"></br></br>
+				    	  </form>
+				        <p>Create new Account</p>
+				    </div>
+				    <div>
+				        <form method="POST" action="/cgi-bin/wall.py">
+				        	<span class="field_name">Enter FirstName </span><span class="star">*</span><br>
+				            <input type="text" name="first_name" required placeholder="your firstname"><br>
+				            <span class="field_name">Enter LastName </span><span class="star">*</span><br>
+				            <input type="text" name="last_name" required placeholder="your lastname"><br>
+				            <span class="field_name">Enter Username </span><span class="star">*</span><br>
+				            <input type="text" name="username" required placeholder="your username"><br>
+				            <span class="field_name">Enter Password </span><span class="star">*</span><br>  
+				            <input type="password" name="password" required placeholder="your password"><br>
+				            <span class="field_name">Enter Email </span><br>  
+				    		<input type="text" name="email" placeholder="your email"><br>
+				            <input type="hidden" name="action" value="registration">
+				    		<input class="button" type="submit" value="Registrate">
+				        </form>
+				    </div>""")
 		else:
 			insertQuery = "insert into users(username, password, first_name, last_name, email) \
 					values ('%s', '%s', '%s', '%s', '%s')" % (username, password, firstname, lastname, email)
@@ -221,26 +225,31 @@ else:
 			printPosts(row[0])
 
 		else:
-			print("""<p>Incorrect Username or Password!</p>""")
-			print("""<form method="POST" action="/cgi-bin/wall.py">
-				        Username <input type="text" name="username" required placeholder="your username">
-				        Password <input type="password" name="password"required placeholder="your password">
-						<input type="submit" value="Log in"></br></br>
-					  </form>
-				    <p>Create new Account</p>
-				    <form method="POST" action="/cgi-bin/registration.py">
-				    	<span>Enter FirstName *</span><br>
-				        <input type="text" name="first_name" required placeholder="your firstname"><br>
-				        <span>Enter LastName *</span><br>
-				        <input type="text" name="last_name" required placeholder="your lastname"><br>
-				        <span>Enter Username *</span><br>
-				        <input type="text" name="username" required placeholder="your username"><br>
-				        <span>Enter Password *</span><br>  
-				        <input type="password" name="password" required placeholder="your password"><br>
-				        <span>Enter Email </span><br>  
-						<input type="text" name="email" placeholder="your email"><br>
-						<input type="submit" value="Registrate">
-				    </form>""")
+			print("""<p class="warning">Incorrect Username or Password!</p>""")
+			print("""<div>
+				        <form method="POST" action="/cgi-bin/wall.py">
+				            Username <input type="text" name="username" required placeholder="your username">
+				            Password <input type="password" name="password" required placeholder="your password">
+				    		<input class="button" type="submit" value="Log in"></br></br>
+				    	  </form>
+				        <p>Create new Account</p>
+				    </div>
+				    <div>
+				        <form method="POST" action="/cgi-bin/wall.py">
+				        	<span class="field_name">Enter FirstName </span><span class="star">*</span><br>
+				            <input type="text" name="first_name" required placeholder="your firstname"><br>
+				            <span class="field_name">Enter LastName </span><span class="star">*</span><br>
+				            <input type="text" name="last_name" required placeholder="your lastname"><br>
+				            <span class="field_name">Enter Username </span><span class="star">*</span><br>
+				            <input type="text" name="username" required placeholder="your username"><br>
+				            <span class="field_name">Enter Password </span><span class="star">*</span><br>  
+				            <input type="password" name="password" required placeholder="your password"><br>
+				            <span class="field_name">Enter Email </span><br>  
+				    		<input type="text" name="email" placeholder="your email"><br>
+				            <input type="hidden" name="action" value="registration">
+				    		<input class="button" type="submit" value="Registrate">
+				        </form>
+				    </div>""")
 
 
 print("""</body>

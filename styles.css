@@ -1,4 +1,60 @@
 body {
 	background-color: cyan; 
 }
+h1 {
+	float: left;
+}
+span.star {
+	color: red;
+}
+div {
+	text-align: center;
+}	
+div.post{
+	text-align: left;
+	clear: left;
+}
+p.warning {
+	color: red;
+	text-align: center;
+}
+input {
+	min-width: 250px;
+	min-height: 20px;
+}
+input.button {
+	min-width: 100px;
+	min-height: 20px;
+}
+input.button-edit {
+	float: left;
+	min-width: 100px;
+	min-height: 20px;
+}
+input.button-delete {
+	float: right;
+	clear: right;
+	min-width: 100px;
+	min-height: 20px;
+}
+p.logout {
+	float: right;
+	text-align: right;
+	min-width: 100px;
+	min-height: 20px;
+	
+}
+p {
+	text-align: center;
+}
+p.published {
+	text-align: right;
+}
+p.button-create {
+	text-align: center;
+	clear: both;
 
+}
+hr {
+	clear: both;
+}

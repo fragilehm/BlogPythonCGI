@@ -46,7 +46,7 @@ cursor.execute(getUsernameQuery)
 row = cursor.fetchone()
 print("""<h1>User: {}</h1>""".format(row[0]))
 
-print("""<form method="POST" action="/cgi-bin/wall.py">
+print("""<div class="post"><form method="POST" action="/cgi-bin/wall.py">
 			<label for="title">Title</label><br>
 			<input type="text" name="title" placeholder="Enter the title" value="{}" required><br>
 			<label for="content">Content</label><br>
@@ -54,9 +54,9 @@ print("""<form method="POST" action="/cgi-bin/wall.py">
 			<input type="hidden" name="action" value="{}">
 			<input type="hidden" name="user_id" value="{}">
 			<input type="hidden" name="post_id" value="{}">
-			<input type="submit" name="new_post" value="POST">
+			<input class="button" type="submit" name="new_post" value="POST">
 
-		</form>""".format(title, content, action, user_id, post_id))
+		</form></div>""".format(title, content, action, user_id, post_id))
 
 cursor.close()
 connection.close()
