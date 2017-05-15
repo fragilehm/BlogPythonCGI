@@ -14,7 +14,7 @@
 		<input type="submit" value="Log in"></br></br>
 	  </form>
     <p>Create new Account</p>
-    <form method="POST" action="/cgi-bin/registration.py">
+    <form method="POST" action="/cgi-bin/wall.py">
     	<span>Enter FirstName *</span><br>
         <input type="text" name="first_name" required placeholder="your firstname"><br>
         <span>Enter LastName *</span><br>
@@ -25,6 +25,7 @@
         <input type="password" name="password" required placeholder="your password"><br>
         <span>Enter Email </span><br>  
 		<input type="text" name="email" placeholder="your email"><br>
+        <input type="hidden" name="action" value="registration">
 		<input type="submit" value="Registrate">
     </form>
 </body>

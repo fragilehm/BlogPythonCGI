@@ -35,6 +35,10 @@ initialPass = html.escape(initialPass)
 hash_object = hashlib.md5(initialPass.encode())
 password = hash_object.hexdigest()
 
+firstname = form.getfirst("first_name", "")
+lastname = form.getfirst("last_name", "")
+email = form.getfirst("email", "")
+
 action = form.getfirst("action", "wall")
 title = form.getfirst("title", "")
 content = form.getfirst("content", "")
@@ -48,22 +52,26 @@ title = html.escape(title)
 content = html.escape(content)
 user_id = html.escape(user_id)
 post_id = html.escape(post_id)
+firstname = html.escape(firstname)
+lastname = html.escape(lastname)
+email = html.escape(email)
 
 
-if(username != ""):
-	print("""<h1>User: {}</h1>""".format(username))
-else:
-	getUsernameQuery = "select username from users where user_id = '%d'" % int(user_id)
-	cursor.execute(getUsernameQuery)
 
-	row = cursor.fetchone()
-	print("""<h1>User: {}</h1>""".format(row[0]))
-
-print("""<form method="GET" action="../index.html">
-			<input type="submit" name="new_post" value="Log Out">
-		</form><br><br>""")
 
 def printPosts(userID):
+	if(username != ""):
+		print("""<h1>User: {}</h1>""".format(username))
+	else:
+		getUsernameQuery = "select username from users where user_id = '%d'" % int(user_id)
+		cursor.execute(getUsernameQuery)
+
+		row = cursor.fetchone()
+		print("""<h1>User: {}</h1>""".format(row[0]))
+
+	print("""<form method="GET" action="../index.html">
+				<input type="submit" name="logout" value="Log Out">
+			</form><br><br>""")
 	getQuery = """select * from posts inner join users on users.user_id = posts.user_id
 						 order by posts.creation_date desc"""
 	try:
@@ -80,30 +88,31 @@ def printPosts(userID):
 		print("""<hr>""")
 
 		rows = cursor.fetchall()
-		for row in rows:
-			print("""<p>Publisher: {} | published date: {}</p>""".format(row[8], row[3]))
-			print("""<p>Title: {}</p>
-					 <p>Content: {}</p>""".format(row[1], row[2]))
-			
-			if((row[6] == username and row[7] == password)  or (row[5] == int(user_id))):
-				print("""<form method="POST" action="/cgi-bin/post.py">
-							<input type="hidden" name="post_id" value="{}">
-							<input type="hidden" name="user_id" value="{}">
-							<input type="hidden" name="title" value="{}">
-							<input type="hidden" name="content" value="{}">
-							<input type="hidden" name="action" value="update">
-							<input type="submit" name="edit" value="Edit">
-				</form>""".format(row[0], row[5], row[1], row[2]))
-				print("""<form method="POST" action="/cgi-bin/wall.py">
-							<input type="hidden" name="post_id" value="{}">
-							<input type="hidden" name="user_id" value="{}">
-							<input type="hidden" name="title" value="{}">
-							<input type="hidden" name="content" value="{}">
-							<input type="hidden" name="action" value="delete">
-							<input type="submit" name="delete" value="Delete">
-				</form>""".format(row[0], row[5], row[1], row[2]))
+		if (rows is not None):
+			for row in rows:
+				print("""<p>Publisher: {} | published date: {}</p>""".format(row[8], row[3]))
+				print("""<p>Title: {}</p>
+						 <p>Content: {}</p>""".format(row[1], row[2]))
+				
+				if((row[6] == username and row[7] == password)  or (row[5] == int(user_id))):
+					print("""<form method="POST" action="/cgi-bin/post.py">
+								<input type="hidden" name="post_id" value="{}">
+								<input type="hidden" name="user_id" value="{}">
+								<input type="hidden" name="title" value="{}">
+								<input type="hidden" name="content" value="{}">
+								<input type="hidden" name="action" value="update">
+								<input type="submit" name="edit" value="Edit">
+					</form>""".format(row[0], row[5], row[1], row[2]))
+					print("""<form method="POST" action="/cgi-bin/wall.py">
+								<input type="hidden" name="post_id" value="{}">
+								<input type="hidden" name="user_id" value="{}">
+								<input type="hidden" name="title" value="{}">
+								<input type="hidden" name="content" value="{}">
+								<input type="hidden" name="action" value="delete">
+								<input type="submit" name="delete" value="Delete">
+					</form>""".format(row[0], row[5], row[1], row[2]))
 
-			print("""<hr>""")
+				print("""<hr>""")
 
 if (action == "create"):	
 
@@ -136,7 +145,65 @@ elif (action == "delete"):
 		print("""Exception!""")
 	else:
 		printPosts(user_id)
+elif (action == "registration"):
+	
 
+	# Execute the SQL command
+	try:
+		checkUserQuery = "select * from users where username = '%s' and password = '%s'" % (username, password)
+		cursor.execute(checkUserQuery)
+		
+	except Exception:
+		print("""Exception!""")
+	# Fetch all the rows in a list of lists.
+	else:
+		row = cursor.fetchone()
+
+		if(row is not None):
+			print("""<p>User: \"{}\" Already Exists</p>""".format(username))
+			print("""<form method="POST" action="/cgi-bin/wall.py">
+			        Username <input type="text" name="username" required placeholder="your username">
+			        Password <input type="password" name="password"required placeholder="your password">
+					<input type="submit" value="Log in"></br></br>
+				  </form>
+			    <p>Create new Account</p>
+			    <form method="POST" action="/cgi-bin/wall.py">
+				    <span>Enter FirstName *</span><br>
+			        <input type="text" name="first_name" required placeholder="your firstname"><br>
+			        <span>Enter LastName *</span><br>
+			        <input type="text" name="last_name" required placeholder="your lastname"><br>
+			        <span>Enter Username *</span><br>
+			        <input type="text" name="username" required placeholder="your username"><br>
+			        <span>Enter Password *</span><br>  
+			        <input type="password" name="password" required placeholder="your password"><br>
+			        <span>Enter Email </span><br>  
+					<input type="text" name="email" placeholder="your email"><br>
+					<input type="hidden" name="action" value="registration">
+					<input type="submit" value="Registrate">
+			    </form>""")
+		else:
+			insertQuery = "insert into users(username, password, first_name, last_name, email) \
+					values ('%s', '%s', '%s', '%s', '%s')" % (username, password, firstname, lastname, email)
+			try:
+				cursor.execute(insertQuery)
+				connection.commit()
+			except Exception:
+				print("""Exception!""")
+			else:
+				getUserID = "select * from users where username = '%s' and password = '%s'" % (username, password)
+				try:
+					cursor.execute(getUserID)
+
+				except Exception:
+					print("""Exception!""")
+				else:
+					row = cursor.fetchone()
+					user_id = row[0]
+					printPosts(user_id)
+
+				
+
+	# Fetch all the rows in a list of lists.
 else:
 	checkUserQuery = "select * from users where username = '%s' and password = '%s'" % (username, password)
 			
