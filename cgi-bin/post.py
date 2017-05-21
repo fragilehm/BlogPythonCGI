@@ -5,6 +5,13 @@ import cgi
 import html
 import mysql.connector
 import hashlib
+import os
+import http.cookies
+import sys
+from random import randint
+import cgitb
+cgitb.enable(display=1, logdir="/log.txt")
+cookie = http.cookies.SimpleCookie(os.environ.get("HTTP_COOKIE"))
 config = {
   'user': 'root',
   'password': 'scorpion',
@@ -16,15 +23,6 @@ config = {
 connection = mysql.connector.connect(**config)
 cursor = connection.cursor()
 
-print("Content-type: text/html\n")
-print("""<!DOCTYPE HTML>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <link rel="stylesheet" href="../styles.css">
-            <title>Title</title>
-        </head>
-        <body>""")
 form = cgi.FieldStorage()
 
 
@@ -40,10 +38,32 @@ content = html.escape(content)
 user_id = html.escape(user_id)
 post_id = html.escape(post_id)
 
+cookie_user = cookie.get("cookie_user")
+if cookie_user is not None:
+  getUserID = "select * from users where session_id = '%d'" % (int(cookie_user.value))
+  try:
+    cursor.execute(getUserID)
 
+  except Exception:
+    print("""Exception!""")
+  else:
+    row = cursor.fetchone()
+    user_id = row[0]
 getUsernameQuery = "select username from users where user_id = '%d'" % int(user_id)
 cursor.execute(getUsernameQuery)
 row = cursor.fetchone()
+
+
+print("Content-type: text/html\n")
+print("""<!DOCTYPE HTML>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="../styles.css">
+            <title>Title</title>
+        </head>
+        <body>""")
+
 print("""<h1>User: {}</h1>""".format(row[0]))
 
 print("""<div class="post"><form method="POST" action="/cgi-bin/wall.py">
