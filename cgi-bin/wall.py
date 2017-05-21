@@ -23,6 +23,9 @@ config = {
 connection = mysql.connector.connect(**config)
 cursor = connection.cursor()
 
+
+
+
 cookie = http.cookies.SimpleCookie(os.environ.get("HTTP_COOKIE"))
 
 form = cgi.FieldStorage()
@@ -58,9 +61,7 @@ email = html.escape(email)
 logout = html.escape(logout)
 
 def printer():
-	print("Content-type: text/html\n")
-
-
+	print("Content-type: text/html; charset=utf8\n\r")
 
 def printHeader():
 
@@ -115,7 +116,7 @@ def printPosts(userID):
 		row = cursor.fetchone()
 		print("""<h1>User: {}</h1>""".format(row[0]))
 
-	print("""<form method="GET" action="/cgi-bin/wall.py">
+	print("""<form method="POST" action="/cgi-bin/wall.py">
 				<p class="logout"><input class="button" type="submit" name="logout" value="Log Out"></p>
 				<input type="hidden" name="action" value="login">
 
@@ -167,9 +168,11 @@ cookie_user = cookie.get("cookie_user")
 is_any_cookie = False
 
 if cookie_user is not None:
+	if(cookie_user.value == "deleted" and action == "delete"):
+		action = "login"
 
-	if(logout == "Log Out"):
-		updateSessionQuery = "update users set session_id = 0 WHERE session_id='%d'" % (int(cookie_user.value))
+	if(logout == "Log Out" and cookie_user.value != "deleted"):
+		updateSessionQuery = "update users set session_id = NULL WHERE session_id='%d'" % (int(cookie_user.value))
 		try:
 			cursor.execute(updateSessionQuery)
 			connection.commit()
@@ -220,6 +223,7 @@ elif (action == "update"):
 	else:
 		printPosts(user_id)
 elif (action == "delete"):
+
 	deleteQuery = "delete from posts where post_id = '%d'" % (int(post_id))
 	try:
 		cursor.execute(deleteQuery)
@@ -231,7 +235,7 @@ elif (action == "delete"):
 elif(is_any_cookie):
 
 	printPosts(user_id)
-	print("""<p class="warning">User: \"{}\" Already Exists</p>""".format(logout))
+	#print("""Exception! HAVE COOKIE""")
 
 
 elif (action == "registration"):
@@ -255,9 +259,9 @@ elif (action == "registration"):
 			printLoginForm()
 		else:
 			cookie_user = cookie.get("cookie_user")
-			if cookie_user is None:
+			if (cookie_user is None or cookie_user.value == "deleted"):
 			    print("Set-cookie: cookie_user={}".format(rand_id))
-
+			
 			insertQuery = "insert into users(username, password, first_name, last_name, email, session_id) \
 					values ('%s', '%s', '%s', '%s', '%s', '%d')" % (username, password, firstname, lastname, email, rand_id)
 			try:
@@ -294,7 +298,19 @@ elif (action == "login"):
 		row = cursor.fetchone()
 		rand_id = randint(1, 10000000)
 
+		cookie_id = ""
+		if (cookie_user is not None):
+			cookie_id = cookie_user.value
+
+		location = "http://localhost:8000/cgi-bin/post.py"
+
+
+		# printer()
+		# print("Status: 302 Found\n\r")
+		# print("Location: {}\n\r".format(location))
+
 		if(row is not None):
+
 			updateSessionQuery = "update users set session_id = '%d' WHERE user_id='%d'" % (rand_id, row[0])
 			try:
 				cursor.execute(updateSessionQuery)
@@ -306,12 +322,17 @@ elif (action == "login"):
 				print("Set-cookie: cookie_user={}".format(rand_id))
 
 			printPosts(row[0])
+			#print("""Exception 1111!""")
+
 
 		else:
-			
 
 			printHeader()
-			if(username != ""):
+			#print("""Exception NEW LOGIN!""")
+			# for param in os.environ.keys():
+			# 	print ("<p>{}{}</p>".format(param, os.environ[param]))
+
+			if(username != "" and cookie_id != "deleted"):
 				print("""<p class="warning">Incorrect Username or Password!</p>""")
 			printLoginForm()
 

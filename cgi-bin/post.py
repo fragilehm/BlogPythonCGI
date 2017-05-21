@@ -23,6 +23,8 @@ config = {
 connection = mysql.connector.connect(**config)
 cursor = connection.cursor()
 
+
+
 form = cgi.FieldStorage()
 
 
@@ -40,6 +42,7 @@ post_id = html.escape(post_id)
 
 cookie_user = cookie.get("cookie_user")
 if cookie_user is not None:
+
   getUserID = "select * from users where session_id = '%d'" % (int(cookie_user.value))
   try:
     cursor.execute(getUserID)
@@ -49,6 +52,7 @@ if cookie_user is not None:
   else:
     row = cursor.fetchone()
     user_id = row[0]
+    
 getUsernameQuery = "select username from users where user_id = '%d'" % int(user_id)
 cursor.execute(getUsernameQuery)
 row = cursor.fetchone()
